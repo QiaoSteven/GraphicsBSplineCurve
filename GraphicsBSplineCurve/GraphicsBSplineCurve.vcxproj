@@ -189,7 +189,9 @@
     <ClInclude Include="GraphicsBSplineCurveDoc.h" />
     <ClInclude Include="GraphicsBSplineCurveView.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MapObj.h" />
     <ClInclude Include="OutputWnd.h" />
+    <ClInclude Include="Point3D.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -203,7 +205,9 @@
     <ClCompile Include="GraphicsBSplineCurveDoc.cpp" />
     <ClCompile Include="GraphicsBSplineCurveView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MapObj.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
+    <ClCompile Include="Point3D.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

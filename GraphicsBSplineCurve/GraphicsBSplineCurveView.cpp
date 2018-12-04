@@ -64,7 +64,7 @@ BOOL CGraphicsBSplineCurveView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CGraphicsBSplineCurveView 绘图
 
-void CGraphicsBSplineCurveView::OnDraw(CDC* /*pDC*/)
+void CGraphicsBSplineCurveView::OnDraw(CDC* pDC)
 {
 	CGraphicsBSplineCurveDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
@@ -72,6 +72,111 @@ void CGraphicsBSplineCurveView::OnDraw(CDC* /*pDC*/)
 		return;
 
 	// TODO: 在此处为本机数据添加绘制代码
+	/*************************************************************************/
+	CRect rect;
+	this->GetClientRect(rect);
+	pDC->FillSolidRect(&rect, RGB(255, 255, 255));//为防止残留曲线的干扰，重画前清空面板
+	/*************************************************************************/
+
+//之所以不用pointList进行重画，是因为在功能三中，会重复使用pointList这个顶点列表，为了保证在功能一二三中均重画，必须保留下最初始的顶点列表
+	if (objList.GetSize() != 0)//要保证非空才能重画
+	{
+		MapObj* obj = (MapObj*)objList.GetAt(0);//只取图形列表中第一个图形
+		int pointsize = obj->points.GetSize();
+		for (int j = 0; j < pointsize-1; j++)//画出默认的控制曲线
+		{
+			CPoint p1 = obj->points.GetAt(j);
+			CPoint p2 = obj->points.GetAt((j + 1) % pointsize);
+			pDC->MoveTo(p1);
+			pDC->LineTo(p2);
+		}
+
+		//功能1重画（功能2和功能3实现前默认必须满足功能1重画）
+		pointList.RemoveAll();
+		for (int j = 0; j < pointsize; j++)//画出默认的控制曲线
+		{
+			CPoint p1 = obj->points.GetAt(j);
+			pointList.Add(p1);
+		}
+		Draw3ColorBSpline();
+
+		/************************************************************************************************/
+		if (type == 2)//功能2重画
+		{
+			pointPrintList.RemoveAll();
+			Draw3ColorBSpline();
+			CPoint tempP = pointList.GetAt(0);
+			int xcenter = tempP.x;
+			for (int i = 1; i < pointList.GetSize(); i++)
+			{
+				tempP = pointList.GetAt(i);
+				tempP.x = xcenter * 2 - tempP.x;
+				pointList.SetAt(i, tempP);
+			}
+			pointPrintList.RemoveAll();
+			Draw3ColorBSpline();
+		}
+		else if (type == 3)//功能3重画
+		{
+			double L = 0.5;
+			double Alpha = 45;
+			Alpha *= 3.1415926 / 180;
+			double c = cos(Alpha);
+			double s = sin(Alpha);
+			mPM[0][0] = 1;
+			mPM[0][1] = 0;
+			mPM[0][2] = L * c;
+			mPM[0][3] = 0;
+			mPM[1][0] = 0;
+			mPM[1][1] = 1;
+			mPM[1][2] = L * s;
+			mPM[1][3] = 0;
+			mPM[2][0] = 0;
+			mPM[2][1] = 0;
+			mPM[2][2] = 0;
+			mPM[2][3] = 0;
+			mPM[3][0] = 0;
+			mPM[3][1] = 0;
+			mPM[3][2] = 0;
+			mPM[3][3] = 1;
+			// 坐标变换
+			Point3D *curve = new Point3D[pointPrintList.GetSize()];
+			CPoint tempP = pointList.GetAt(0);
+			CClientDC pDC(this);
+			CPen *oldpen;
+			COLORREF color[3] = { RGB(255,0,0), RGB(0,255,0), RGB(0,0,255) };
+			int xcenter = tempP.x;
+			for (int i = 0; i < 36; i++)
+			{
+				// 计算3D
+				Alpha = i * 10 * 3.1415926 / 180;
+				for (int j = 0; j < pointPrintList.GetSize(); j++)
+				{
+					tempP = pointPrintList.GetAt(j);
+					curve[j].x = (tempP.x - xcenter) * cos(Alpha) + xcenter;
+					curve[j].y = tempP.y;
+					curve[j].z = (tempP.x - xcenter) * sin(Alpha);
+				}
+				// 计算2D
+				From3DTo2D(curve, pointPrintList.GetSize());
+				// 画图
+				pDC.MoveTo(pointPrint3DList.GetAt(0));
+				for (int j = 1; j < pointPrint3DList.GetSize(); j++)
+				{
+					CPen pen;
+					pen.CreatePen(PS_SOLID, 2, color[j / (nPoints + 1) % 3]);
+					oldpen = pDC.SelectObject(&pen);
+					pDC.LineTo(pointPrint3DList.GetAt(j));
+					pDC.SelectObject(oldpen);
+				}
+			}
+		}
+
+		/************************************************************************************************/
+	}
+	
+
+
 }
 
 
@@ -375,6 +480,18 @@ void CGraphicsBSplineCurveView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		ReleaseCapture();//释放鼠标
 		boolLButtonDown = false;
 		Draw3ColorBSpline();
+
+		/*************************************************************/
+		/*************************************************************/
+		//为重画存下目前的顶点
+		MapObj* obj = new MapObj();
+		for (int i = 0; i < pointList.GetSize(); i++)
+		{
+			obj->points.Add(pointList.GetAt(i));
+		}
+		objList.Add(obj);//将此次图形的所有点保存下来
+		/*************************************************************/
+		/*************************************************************/
 	}
 	CView::OnLButtonDblClk(nFlags, point);
 }

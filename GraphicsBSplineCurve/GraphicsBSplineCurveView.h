@@ -63,6 +63,7 @@ public:
 	CArray<CPoint, CPoint> pointList;//折线顶点列表
 	CArray<CPoint, CPoint> pointPrintList;	//画点2D数组
 	CArray<CPoint, CPoint> pointPrint3DList;	//画3D点数组
+	CObArray objList;//每画一个图形，一个Obj,链成ObjList
 
 // 操作
 public:

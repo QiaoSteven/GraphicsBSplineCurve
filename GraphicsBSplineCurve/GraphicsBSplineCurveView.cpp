@@ -83,25 +83,26 @@ void CGraphicsBSplineCurveView::OnDraw(CDC* pDC)
 	{
 		MapObj* obj = (MapObj*)objList.GetAt(0);//只取图形列表中第一个图形
 		int pointsize = obj->points.GetSize();
-		for (int j = 0; j < pointsize-1; j++)//画出默认的控制曲线
-		{
-			CPoint p1 = obj->points.GetAt(j);
-			CPoint p2 = obj->points.GetAt((j + 1) % pointsize);
-			pDC->MoveTo(p1);
-			pDC->LineTo(p2);
-		}
-
-		//功能1重画（功能2和功能3实现前默认必须满足功能1重画）
 		pointList.RemoveAll();
-		for (int j = 0; j < pointsize; j++)//画出默认的控制曲线
+		for (int j = 0; j < pointsize; j++)//将顶点集从obj中取至pointList中
 		{
 			CPoint p1 = obj->points.GetAt(j);
 			pointList.Add(p1);
 		}
-		Draw3ColorBSpline();
 
 		/************************************************************************************************/
-		if (type == 2)//功能2重画
+		if (type == 1)//功能1重画
+		{
+			for (int j = 0; j < pointsize - 1; j++)//画出默认的控制曲线
+			{
+				CPoint p1 = obj->points.GetAt(j);
+				CPoint p2 = obj->points.GetAt((j + 1) % pointsize);
+				pDC->MoveTo(p1);
+				pDC->LineTo(p2);
+			}
+			Draw3ColorBSpline();
+		}
+		else if (type == 2)//功能2重画
 		{
 			pointPrintList.RemoveAll();
 			Draw3ColorBSpline();

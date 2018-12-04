@@ -366,6 +366,22 @@ void CGraphicsBSplineCurveView::OnBspline()
 void CGraphicsBSplineCurveView::OnSymmetry()
 {
 	// TODO: 在此添加命令处理程序代码
+	/****************************************************************************************/
+	/**
+	CRect rect;//边界值
+	this->GetClientRect(rect);
+	int RightBorder = rect.right;
+	int xcenter = RightBorder/2;//用作将对称轴改为视窗中央
+	**/
+	/****************************************************************************************/
+	
+	/*************************************************************************/
+	CDC* pDC = this->GetDC();	//构造设备环境对象
+	CRect rect;
+	this->GetClientRect(rect);
+	pDC->FillSolidRect(&rect, RGB(255, 255, 255));//清空面板
+	/*************************************************************************/
+
 	type = 2;
 	pointPrintList.RemoveAll();
 	Draw3ColorBSpline();
@@ -387,6 +403,13 @@ void CGraphicsBSplineCurveView::OnSymmetry()
 void CGraphicsBSplineCurveView::OnRotate()
 {
 	// TODO: 在此添加命令处理程序代码
+	/*************************************************************************/
+	CClientDC pDC(this);	//构造设备环境对象
+	CRect rect;
+	this->GetClientRect(rect);
+	pDC.FillSolidRect(&rect, RGB(255, 255, 255));//清空面板
+	/*************************************************************************/
+
 	type = 3;
 	// 变换矩阵
 	double L = 0.5;
@@ -413,7 +436,7 @@ void CGraphicsBSplineCurveView::OnRotate()
 	// 坐标变换
 	Point3D *curve = new Point3D[pointPrintList.GetSize()];
 	CPoint tempP = pointList.GetAt(0);
-	CClientDC pDC(this);
+	//CClientDC pDC(this);
 	CPen *oldpen;
 	COLORREF color[3] = { RGB(255,0,0), RGB(0,255,0), RGB(0,0,255) };
 	int xcenter = tempP.x;

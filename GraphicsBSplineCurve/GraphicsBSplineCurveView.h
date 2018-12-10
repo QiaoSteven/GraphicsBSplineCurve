@@ -26,7 +26,7 @@ public:
 public:
 	virtual void OnDraw(CDC* pDC);  // 重写以绘制该视图
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-protected:
+protected:	
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
@@ -64,6 +64,8 @@ public:
 	CArray<CPoint, CPoint> pointPrintList;	//画点2D数组
 	CArray<CPoint, CPoint> pointPrint3DList;	//画3D点数组
 	CObArray objList;//每画一个图形，一个Obj,链成ObjList
+	bool FirstPoint;//标记是否为第一个点
+	bool LastPoint;//标记是否为第最后一个点
 
 // 操作
 public:

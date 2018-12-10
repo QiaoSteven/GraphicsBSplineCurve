@@ -48,6 +48,8 @@ CGraphicsBSplineCurveView::CGraphicsBSplineCurveView() noexcept
 	K = 4;
 	nPoints = 30;
 	pointList.RemoveAll();
+	 FirstPoint=false;//标记是否为第一个点
+	 LastPoint=false;//标记是否为第最后一个点
 }
 
 CGraphicsBSplineCurveView::~CGraphicsBSplineCurveView()
@@ -475,6 +477,16 @@ void CGraphicsBSplineCurveView::OnLButtonDown(UINT nFlags, CPoint point)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (type == 1)
 	{
+		/*****************************************************************/
+		/*****************************************************************/
+		if (!FirstPoint)
+		{
+			FirstPoint = true;
+			pointList.Add(point);
+			pointList.Add(point);
+		}
+		/*****************************************************************/
+		/*****************************************************************/
 		boolLButtonDown = true;
 		this->SetCapture();	//捕捉鼠标
 		startPoint = point;
@@ -501,6 +513,17 @@ void CGraphicsBSplineCurveView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (type==1)
 	{
+		/*************************************************************************/
+		/*************************************************************************/
+		if (!LastPoint)
+		{
+			LastPoint = true;
+			pointList.Add(point);
+			pointList.Add(point);
+		}
+		/*************************************************************************/
+		/*************************************************************************/
+
 		ReleaseCapture();//释放鼠标
 		boolLButtonDown = false;
 		Draw3ColorBSpline();
